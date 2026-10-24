@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#0f7379">
+  <style>
+    :root{--blue:#0f7379;--dark:#0a5055;--yellow:#f2e4c7;--bg:#eef5f1;--ink:#173f42;--line:#cadbd5;--danger:#b83f3f;--mint:#dceee8;--gold:#b8892f}
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 90% 0,#dceee866 0,transparent 28%),var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Noto Sans TC",sans-serif}
+    header{background:linear-gradient(135deg,#e9f4ef 0%,var(--yellow) 100%);padding:18px 16px 14px;position:sticky;top:0;z-index:5;border-bottom:3px solid var(--gold);box-shadow:0 2px 12px #173f4224} h1{font-size:21px;margin:0;color:var(--dark)} header p{margin:3px 0 0;font-size:13px;color:#526f6b}
+    nav{display:flex;background:#fffdf8;border-bottom:1px solid var(--line);position:sticky;top:82px;z-index:4} nav button{flex:1;padding:14px;border:0;background:transparent;font-weight:800;color:#5b7773} nav button.active{color:var(--blue);border-bottom:3px solid var(--blue)}
+    main{max-width:900px;margin:auto;padding:14px 14px 110px}.panel{background:#fffdf9;border:1px solid #fff;border-radius:14px;padding:14px;margin-bottom:14px;box-shadow:0 4px 16px #173f4212}
+    .identity{display:grid;grid-template-columns:110px 1fr;gap:10px}.field label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}.field input,.field select,.search{width:100%;padding:12px;border:1px solid #aac4bc;border-radius:10px;font:inherit;background:#fffdf9;color:var(--ink)}
+    .categories{display:flex;gap:8px;overflow:auto;padding:4px 0 12px}.chip{white-space:nowrap;border:1px solid var(--blue);color:var(--blue);background:#fffdf9;border-radius:999px;padding:7px 12px}.chip.active{background:var(--blue);color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.drink{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fffdf9;color:var(--ink);text-align:left;box-shadow:0 2px 8px #173f420d;transition:transform .12s ease,border-color .12s ease,box-shadow .12s ease}.drink strong{display:block}.drink small{color:#5a7772}.drink:hover{border-color:#78a9a0;box-shadow:0 5px 14px #173f4218}.drink:active{transform:scale(.98)}
+    .overlay{position:fixed;inset:0;background:#0008;display:flex;align-items:flex-end;z-index:20}.sheet{width:100%;max-height:90vh;overflow:auto;background:#fff;border-radius:20px 20px 0 0;padding:18px;max-width:640px;margin:auto}.hidden{display:none!important}
+    .options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.option input{position:absolute;opacity:0}.option span{display:block;text-align:center;padding:10px 5px;border:1px solid #aac4bc;border-radius:9px}.option input:checked+span{background:var(--mint);border-color:var(--blue);color:var(--dark);font-weight:800}
+    h2{font-size:19px;margin:4px 0 12px} h3{font-size:15px;margin:16px 0 7px}.qty{display:flex;align-items:center;gap:16px}.qty button{width:44px;height:44px;border:0;border-radius:50%;font-size:25px;background:var(--mint);color:var(--dark)}.qty b{font-size:22px}.primary{border:0;border-radius:11px;background:linear-gradient(135deg,var(--blue),var(--dark));color:#fff;padding:13px 18px;font-weight:800;font-size:16px}.secondary{border:1px solid var(--blue);border-radius:11px;background:#fffdf9;color:var(--blue);padding:12px 16px;font-weight:700}
+    .actions{display:flex;gap:10px;margin-top:18px}.actions>*{flex:1}.cart-item{border-bottom:1px solid var(--line);padding:10px 0;display:grid;grid-template-columns:1fr auto;gap:8px}.cart-item p{margin:2px 0;color:#5c7382;font-size:13px}.remove{border:0;background:none;color:var(--danger)}
+    .cartbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;z-index:6}.cartbar b{font-size:18px}.closed{background:#fff3cd;color:#765b00;padding:10px;border-radius:8px;margin-bottom:12px}
+    .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{text-align:center;background:var(--mint);border-radius:10px;padding:10px 5px}.stat b{display:block;font-size:20px;color:var(--dark)}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:9px 7px;text-align:left;white-space:nowrap}th{background:#e5f0ec}.loading{text-align:center;padding:50px 10px}.error{color:var(--danger);font-weight:700}.success{background:#e1f1e5;color:#176b2c;padding:14px;border-radius:10px}
+    .order-group{border:1px solid var(--line);border-radius:12px;margin:10px 0;overflow:hidden;background:#fffdf9}.order-group>summary{cursor:pointer;list-style:none;padding:13px 14px;background:#e5f0ec;display:flex;align-items:center;justify-content:space-between;gap:12px}.order-group>summary::-webkit-details-marker,.variant-row>summary::-webkit-details-marker{display:none}.order-group>summary strong{font-size:17px}.group-total{white-space:nowrap;color:var(--dark);font-weight:900}.variant-list{padding:4px 14px 10px}.variant-row{border-bottom:1px solid var(--line);padding:9px 0}.variant-row:last-child{border-bottom:0}.variant-row>summary{cursor:pointer;list-style:none;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.variant-spec{color:#426963}.variant-count{font-weight:900;white-space:nowrap}.buyer-list{margin:8px 0 0;padding:8px 10px 8px 28px;background:#f3f7f4;border-radius:8px;color:#56736f;font-size:13px}.empty-report{padding:18px;text-align:center;color:#5a7772}
+    @media(max-width:500px){.grid{grid-template-columns:1fr 1fr}.statgrid{grid-template-columns:1fr 1fr}.options{grid-template-columns:repeat(2,1fr)}}
+    @media print{header,nav,.no-print,.cartbar{display:none!important}main{max-width:none;padding:0}.panel{box-shadow:none;break-inside:avoid}.report{display:block!important}}
+  
+     
+    body{font-size:17px} h1{font-size:24px} header p{font-size:15px} nav{top:88px} nav button{font-size:17px}
+    main{padding-bottom:132px}.field label{font-size:15px}.chip{font-size:16px;padding:8px 13px}.drink{padding:14px 12px}.drink strong{font-size:18px;line-height:1.35}.drink small{font-size:15px}
+    .primary,.secondary{font-size:17px}.cartbar{bottom:calc(10px + env(safe-area-inset-bottom));left:12px;right:12px;max-width:876px;margin:auto;background:linear-gradient(135deg,#f6edd8,#e3f1eb);border:1px solid #c5aa68;border-radius:17px;padding:11px 12px 11px 16px;box-shadow:0 8px 28px #173f4230}.cartbar small{font-size:14px}.cartbar b{font-size:20px}table{font-size:14px}
+    .config-sheet{height:min(90dvh,760px);max-height:90dvh;padding:0;display:flex;flex-direction:column;overflow:hidden}.sheet-head{padding:16px 18px 12px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.sheet-head h2{margin:0}.close-button{border:0;background:#eef3f6;color:var(--ink);border-radius:50%;width:40px;height:40px;font-size:25px;line-height:1}.sheet-body{padding:4px 18px 22px;overflow-y:auto;overscroll-behavior:contain}.sheet-footer{padding:12px 18px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:#fff;box-shadow:0 -5px 18px #16354a18;display:flex;align-items:center;gap:12px}.sheet-footer .summary{flex:1}.sheet-footer .summary b{display:block;font-size:19px}
+
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}.header-copy{min-width:0}.qr-trigger{flex:0 0 auto;border:1px solid #0f73794d;border-radius:11px;background:#fffdf9;color:var(--dark);padding:10px 12px;font-weight:900;box-shadow:0 2px 8px #173f4218}
+    #qrOverlay{align-items:center;padding:18px}.qr-sheet{border-radius:20px;max-width:380px;text-align:center;padding:18px}.qr-sheet .sheet-head{padding:0 0 12px;border-bottom:0;align-items:center}.qr-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin:4px auto 12px}.qr-card img{display:block;width:min(72vw,300px);height:auto;margin:auto}.qr-hint{margin:8px 0 14px;color:#547080}.qr-url{display:block;overflow-wrap:anywhere;font-size:12px;color:#547080;margin-top:10px}
+    @media(max-width:430px){.qr-trigger{padding:9px 10px;font-size:13px}header{padding-right:12px}}
+    @media(max-width:600px){
+      body.keyboard-open main{padding-bottom:30px}
+      body.keyboard-open .cartbar{left:auto;right:8px;bottom:calc(8px + env(safe-area-inset-bottom));width:auto;max-width:calc(100vw - 16px);padding:7px 8px 7px 11px;border-radius:999px;gap:8px}
+      body.keyboard-open .cartbar>div{display:flex;align-items:center;gap:4px}
+      body.keyboard-open .cartbar small,body.keyboard-open .cartbar br{display:none}
+      body.keyboard-open .cartbar b{font-size:14px;white-space:nowrap}
+      body.keyboard-open .cartbar .primary{padding:8px 10px;font-size:13px;border-radius:999px}
+      .order-group>summary{align-items:flex-start}.variant-row>summary{grid-template-columns:1fr}.variant-count{justify-self:start}
+    }
+  </style>
+</head>
+<body>
+  <header><div class="header-copy"><h1 id="title">班級飲料點餐</h1><p id="subtitle">資料載入中…</p></div><button class="qr-trigger" type="button" onclick="openOverlay('qrOverlay')" aria-label="顯示點餐 QR Code">▦ QR Code</button></header>
+  <nav><button id="orderTab" class="active" onclick="showTab('order')">我要點餐</button><button id="reportTab" onclick="showTab('report')">老師報表</button></nav>
+  <main>
+    <section id="orderPage">
+      <div id="closed" class="closed hidden">目前已停止收單，仍可查看老師報表。</div>
+      <div class="panel identity">
+        <div class="field"><label>座號</label><input id="seat" inputmode="numeric" pattern="[0-9]*" placeholder="例如 3"></div>
+        <div class="field"><label>姓名</label><input id="name" maxlength="30" autocomplete="name" placeholder="請輸入姓名"></div>
+      </div>
+      <input id="search" class="search" placeholder="搜尋飲料…" oninput="renderMenu()">
+      <div id="categories" class="categories"></div>
+      <div id="menu" class="grid"></div>
+    </section>
+    <section id="reportPage" class="hidden report">
+      <div class="actions no-print"><button class="secondary" onclick="loadReport()">重新整理</button><button class="primary" onclick="window.print()">列印／存成 PDF</button></div>
+      <div id="report"><div class="loading">報表載入中…</div></div>
+    </section>
+  </main>
+
+  <div id="cartbar" class="cartbar"><div><small>購物車</small><br><b><span id="cartCups">0</span> 杯・$<span id="cartTotal">0</span></b></div><button class="primary" onclick="openCart()">查看並送出</button></div>
+
+
+  <div id="qrOverlay" class="overlay hidden" onclick="backdrop(event,'qrOverlay')"><div class="sheet qr-sheet">
+    <div class="sheet-head"><h2>掃描 QR Code 點餐</h2><button class="close-button" aria-label="關閉" onclick="closeOverlay('qrOverlay')">×</button></div>
+    <div class="qr-card"><img id="qrImage" width="320" height="320" alt="八曜和茶班級飲料點餐 QR Code"></div>
+    <p class="qr-hint">掃描後會直接開啟這個點餐頁面</p>
+    <a id="qrLink" class="primary" target="_blank" rel="noopener">開啟點餐頁</a>
+    <span id="qrUrl" class="qr-url"></span>
+  </div></div>
+
+  <div id="configOverlay" class="overlay hidden" onclick="backdrop(event,'configOverlay')"><div class="sheet config-sheet">
+    <div class="sheet-head"><div><h2 id="configName"></h2><div id="configPrice"></div></div><button class="close-button" aria-label="關閉" onclick="closeOverlay('configOverlay')">×</button></div>
+    <div class="sheet-body">
+      <h3>杯型</h3><div id="sizeOptions" class="options"></div>
+      <h3>溫度／冰量</h3><div id="iceOptions" class="options"></div>
+      <h3>甜度</h3><div id="sugarOptions" class="options"></div>
+      <h3>加料（可複選）</h3><div id="addonOptions" class="options"></div>
+      <h3>杯數</h3><div class="qty"><button onclick="changeQty(-1)">−</button><b id="qty">1</b><button onclick="changeQty(1)">＋</button></div>
+    </div>
+    <div class="sheet-footer"><div id="configSummary" class="summary"></div><button class="primary" onclick="addToCart()">加入訂單</button></div>
+  </div></div>
+
+  <div id="cartOverlay" class="overlay hidden" onclick="backdrop(event,'cartOverlay')"><div class="sheet">
+    <h2>確認訂單</h2><div id="cartList"></div><div id="cartMessage"></div>
+    <div class="actions"><button class="secondary" onclick="closeOverlay('cartOverlay')">繼續選購</button><button id="submitBtn" class="primary" onclick="submitOrder(false)">送出訂單</button></div>
+  </div></div>
+
+  <script>
+    const GAS_API_URL='https://script.google.com/macros/s/AKfycbzjUpbHzxasYRZUYMG2lAHzzIJLDMxfcDUEs7IObLrd9U8u4LGxzZf88ATzMvPJTKaE/exec';
+    const BOOT_CACHE_KEY='temp-order-bootstrap-v1';
+    const IN_GAS=!!(window.google&&window.google.script&&window.google.script.run);
+    let boot={config:{},menu:[],addons:[]},cart=[],category='全部',selected=null,qty=1,reportLoaded=false;
+
+    function init(data,fromCache=false){boot=data;document.getElementById('title').textContent=data.config['活動名稱']||'班級飲料點餐';document.getElementById('subtitle').textContent=(data.config['班級名稱']||'')+'・'+(data.config['取餐門市']||'')+(fromCache?'・同步最新菜單中…':'');document.getElementById('closed').classList.toggle('hidden',String(data.config['開放點餐']).trim()!=='否');renderCategories();renderMenu();if(!fromCache){try{localStorage.setItem(BOOT_CACHE_KEY,JSON.stringify({savedAt:Date.now(),data}))}catch(e){}}}
+
+    async function loadBootstrap(){let cached=null;try{const saved=JSON.parse(localStorage.getItem(BOOT_CACHE_KEY)||'null');if(saved&&saved.data&&Date.now()-Number(saved.savedAt)<86400000)cached=saved.data}catch(e){}if(cached)init(cached,true);try{const fresh=IN_GAS?await runGas('getBootstrap'):await jsonp('bootstrap');init(fresh,false)}catch(e){if(cached)document.getElementById('subtitle').textContent=(cached.config['班級名稱']||'')+'・'+(cached.config['取餐門市']||'')+'・目前顯示上次菜單';else fail(e)}}
+    function runGas(method,arg){return new Promise((resolve,reject)=>{let runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);if(arg===undefined)runner[method]();else runner[method](arg)})}
+    function jsonp(action){return new Promise((resolve,reject)=>{const callback='tempOrderCallback_'+Date.now()+'_'+Math.random().toString(36).slice(2);const script=document.createElement('script');let timer;const cleanup=()=>{clearTimeout(timer);script.remove();try{delete window[callback]}catch(e){window[callback]=undefined}};window[callback]=response=>{cleanup();response&&response.ok?resolve(response.data):reject(new Error(response&&response.error||'資料讀取失敗。'))};script.onerror=()=>{cleanup();reject(new Error('無法連接 Google Sheet，請稍後再試。'))};script.src=GAS_API_URL+'?action='+encodeURIComponent(action)+'&callback='+encodeURIComponent(callback)+'&_='+Date.now();document.head.appendChild(script);timer=setTimeout(()=>{cleanup();reject(new Error('資料讀取逾時，請重新整理。'))},20000)})}
+    function renderCategories(){const cats=['全部',...new Set(boot.menu.map(x=>x.category))];document.getElementById('categories').innerHTML=cats.map(c=>`<button class="chip ${c===category?'active':''}" onclick="setCategory('${escAttr(c)}')">${esc(c)}</button>`).join('')}
+    function setCategory(c){category=c;renderCategories();renderMenu()}
+    function renderMenu(){const q=document.getElementById('search').value.trim().toLowerCase();const list=boot.menu.filter(x=>(category==='全部'||x.category===category)&&(!q||x.name.toLowerCase().includes(q)));document.getElementById('menu').innerHTML=list.map(x=>`<button class="drink" onclick="configure('${escAttr(x.name)}')"><strong>${esc(x.name)}</strong><small>${priceText(x)}</small></button>`).join('')||'<p>找不到符合的品項</p>'}
+    function configure(name){selected=boot.menu.find(x=>x.name===name);qty=1;document.getElementById('configName').textContent=selected.name;document.getElementById('configPrice').textContent=priceText(selected);radioGroup('sizeOptions','size',Object.entries(selected.prices).filter(x=>x[1]!=null).map(x=>[x[0],sizeLabel(selected,x[0])+' $'+x[1]]));radioGroup('iceOptions','ice',selected.ice.map(x=>[x,x]));radioGroup('sugarOptions','sugar',selected.sugar.map(x=>[x,x]));document.getElementById('addonOptions').innerHTML=boot.addons.map((x,i)=>`<label class="option"><input type="checkbox" name="addon" value="${escAttr(x.name)}" ${x.name==='不加料'?'checked':''} onchange="addonChanged(this)"><span>${esc(x.name)}${x.price?' +$'+x.price:''}</span></label>`).join('');document.getElementById('qty').textContent=qty;updateConfigSummary();openOverlay('configOverlay');requestAnimationFrame(()=>{document.querySelector('#configOverlay .sheet-body').scrollTop=0})}
+    function radioGroup(id,name,opts){document.getElementById(id).innerHTML=opts.map((x,i)=>`<label class="option"><input type="radio" name="${name}" value="${escAttr(x[0])}" ${i===0?'checked':''} onchange="updateConfigSummary()"><span>${esc(x[1])}</span></label>`).join('')}
+    function addonChanged(el){const boxes=[...document.querySelectorAll('input[name=addon]')];if(el.value==='不加料'&&el.checked)boxes.filter(x=>x!==el).forEach(x=>x.checked=false);else if(el.checked)boxes.find(x=>x.value==='不加料').checked=false;if(!boxes.some(x=>x.checked))boxes.find(x=>x.value==='不加料').checked=true;updateConfigSummary()}
+    function changeQty(d){qty=Math.max(1,Math.min(10,qty+d));document.getElementById('qty').textContent=qty;updateConfigSummary()}
+    function updateConfigSummary(){if(!selected)return;const size=document.querySelector('input[name=size]:checked')?.value;if(!size)return;const addons=[...document.querySelectorAll('input[name=addon]:checked')].map(x=>x.value).filter(x=>x!=='不加料');const extra=addons.reduce((sum,a)=>sum+(boot.addons.find(x=>x.name===a)?.price||0),0);document.getElementById('configSummary').innerHTML=`<small>目前小計</small><b>${qty} 杯・$${(selected.prices[size]+extra)*qty}</b>`}
+    function addToCart(){const size=checked('size'),ice=checked('ice'),sugar=checked('sugar'),addons=[...document.querySelectorAll('input[name=addon]:checked')].map(x=>x.value).filter(x=>x!=='不加料');const addonPrice=addons.reduce((s,a)=>s+(boot.addons.find(x=>x.name===a)?.price||0),0);const unitPrice=selected.prices[size]+addonPrice;cart.push({item:selected.name,size,ice,sugar,addons,qty,unitPrice,subtotal:unitPrice*qty});closeOverlay('configOverlay');renderCartBar()}
+    function checked(n){return document.querySelector(`input[name=${n}]:checked`).value}
+    function renderCartBar(){document.getElementById('cartCups').textContent=cart.reduce((s,x)=>s+x.qty,0);document.getElementById('cartTotal').textContent=cart.reduce((s,x)=>s+x.subtotal,0)}
+    function openCart(){renderCart();openOverlay('cartOverlay')}
+    function renderCart(){const box=document.getElementById('cartList');box.innerHTML=cart.length?cart.map((x,i)=>`<div class="cart-item"><div><b>${esc(x.item)} × ${x.qty}</b><p>${sizeLabel(boot.menu.find(m=>m.name===x.item),x.size)}・${esc(x.ice)}・${esc(x.sugar)}・${esc(x.addons.join('、')||'不加料')}</p><strong>$${x.subtotal}</strong></div><button class="remove" onclick="removeCart(${i})">移除</button></div>`).join(''):'<p>購物車目前是空的。</p>';document.getElementById('cartMessage').innerHTML=''}
+    function removeCart(i){cart.splice(i,1);renderCart();renderCartBar()}
+    async function submitOrder(overwrite){const seat=document.getElementById('seat').value.trim(),name=document.getElementById('name').value.trim(),msg=document.getElementById('cartMessage');if(!/^\d+$/.test(seat)){msg.innerHTML='<p class="error">請輸入正確座號。</p>';return}if(!name){msg.innerHTML='<p class="error">請輸入姓名。</p>';return}if(!cart.length){msg.innerHTML='<p class="error">請先加入飲料。</p>';return}setBusy(true);try{const res=IN_GAS?await runGas('saveOrder',{seat,name,items:cart,overwrite}):await postOrder({seat,name,items:cart,overwrite});setBusy(false);if(res.status==='EXISTS'){const old=res.existing;msg.innerHTML=`<div class="closed"><strong>${old.seat} 號 ${esc(old.name)} 已有訂單</strong><p>共 ${old.cups} 杯，總額 $${old.total}</p><p>確定要用目前訂單完整覆蓋嗎？</p><div class="actions"><button class="secondary" onclick="closeOverlay('cartOverlay')">取消</button><button class="primary" onclick="submitOrder(true)">確認覆蓋</button></div></div>`;return}msg.innerHTML=`<div class="success">${res.updated?'訂單已更新':'訂單已送出'}：共 ${res.cups} 杯，總額 $${res.total}</div>`;cart=[];renderCartBar();setTimeout(()=>closeOverlay('cartOverlay'),1800)}catch(e){setBusy(false);msg.innerHTML=`<p class="error">${esc(e.message||String(e))}</p>`}}
+    function postOrder(payload){return new Promise((resolve,reject)=>{const requestId=(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));const frame=document.createElement('iframe');const form=document.createElement('form');frame.name='tempOrderFrame_'+requestId.replace(/[^a-z0-9]/gi,'');frame.style.display='none';frame.setAttribute('aria-hidden','true');form.method='POST';form.action=GAS_API_URL;form.target=frame.name;form.style.display='none';const field=(name,value)=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=value;form.appendChild(input)};field('action','saveOrder');field('requestId',requestId);field('payload',JSON.stringify(payload));let timer;const cleanup=()=>{clearTimeout(timer);window.removeEventListener('message',receive);setTimeout(()=>{form.remove();frame.remove()},100)};const receive=event=>{const data=event.data;if(!data||data.type!=='TEMP_ORDER_API_RESPONSE'||data.requestId!==requestId)return;let trusted=event.origin==='null'||event.origin==='https://script.google.com';if(!trusted){try{trusted=/\.googleusercontent\.com$/.test(new URL(event.origin).hostname)}catch(e){trusted=false}}if(!trusted)return;cleanup();data.ok?resolve(data.data):reject(new Error(data.error||'訂單送出失敗。'))};window.addEventListener('message',receive);document.body.append(frame,form);form.submit();timer=setTimeout(()=>{cleanup();reject(new Error('訂單送出逾時，請先查看報表確認是否已收到。'))},30000)})}
+    function setBusy(v){const b=document.getElementById('submitBtn');b.disabled=v;b.textContent=v?'處理中…':'送出訂單'}
+    function showTab(tab){const report=tab==='report';document.getElementById('orderPage').classList.toggle('hidden',report);document.getElementById('reportPage').classList.toggle('hidden',!report);document.getElementById('cartbar').classList.toggle('hidden',report);document.getElementById('orderTab').classList.toggle('active',!report);document.getElementById('reportTab').classList.toggle('active',report);if(report)loadReport()}
+    async function loadReport(){document.getElementById('report').innerHTML='<div class="loading">報表載入中…</div>';try{renderReport(IN_GAS?await runGas('getReport'):await jsonp('report'))}catch(e){failReport(e)}}
+    function renderReport(r){
+      const groups=(r.groupedItems||[]).map(group=>`<details class="order-group" open><summary><strong>${esc(group.item)}</strong><span class="group-total">共 ${group.qty} 杯・$${group.subtotal}</span></summary><div class="variant-list">${group.variants.map(variant=>`<details class="variant-row"><summary><span class="variant-spec">${esc(variant.size)}／${esc(variant.ice)}／${esc(variant.sugar)}／${esc(variant.addons)}</span><span class="variant-count">${variant.qty} 杯・$${variant.subtotal}</span></summary><ul class="buyer-list">${variant.buyers.map(b=>`<li>${b.seat} 號 ${esc(b.name)} × ${b.qty}</li>`).join('')}</ul></details>`).join('')}</div></details>`).join('');
+      document.getElementById('report').innerHTML=`<div class="panel"><h2>${esc(r.config['活動名稱']||'訂單統計')}</h2><div class="statgrid"><div class="stat"><b>${r.people}</b>人</div><div class="stat"><b>${r.cups}</b>杯</div><div class="stat"><b>$${r.total}</b>應付</div><div class="stat"><b>$${r.suggestedCash}</b>建議現金</div></div></div><div class="panel"><h2>給店家下單</h2>${groups||'<div class="empty-report">目前沒有訂單</div>'}</div><div class="panel"><h2>老師發放清單</h2><div class="tablewrap"><table><thead><tr><th>座號</th><th>姓名</th><th>品項</th><th>規格</th><th>數量</th></tr></thead><tbody>${r.distribution.map(x=>`<tr><td>${x.seat}</td><td>${esc(x.name)}</td><td>${esc(x.item)}</td><td>${esc(x.size)}／${esc(x.ice)}／${esc(x.sugar)}／${esc(x.addons)}</td><td>${x.qty}</td></tr>`).join('')}</tbody></table></div></div>`
+    }
+    function fail(e){document.getElementById('menu').innerHTML=`<p class="error">載入失敗：${esc(e.message||String(e))}</p>`}function failReport(e){document.getElementById('report').innerHTML=`<p class="error">${esc(e.message||String(e))}</p>`}
+    function sizeLabel(item,size){const priceCount=item?Object.values(item.prices||{}).filter(x=>x!=null).length:0;return priceCount===1?'單一規格':size==='M'?'中杯':'大杯'}
+    function priceText(x){const a=[];if(x.prices.M!=null)a.push(sizeLabel(x,'M')+' $'+x.prices.M);if(x.prices.L!=null)a.push(sizeLabel(x,'L')+' $'+x.prices.L);return a.join('・')}
+    function openOverlay(id){document.getElementById(id).classList.remove('hidden')}function closeOverlay(id){document.getElementById(id).classList.add('hidden')}function backdrop(e,id){if(e.target.id===id)closeOverlay(id)}
+    function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function escAttr(v){return esc(v).replace(/`/g,'&#96;')}
+
+    function initQr(){const url=location.href.split('#')[0].split('?')[0];document.getElementById('qrImage').src='https://quickchart.io/qr?size=320&margin=2&ecLevel=H&text='+encodeURIComponent(url);document.getElementById('qrLink').href=url;document.getElementById('qrUrl').textContent=url}
+
+    
+    const keyboardFields=new Set(['seat','name','search']);
+    function updateKeyboardLayout(){
+      const active=document.activeElement;
+      const fieldFocused=!!active&&keyboardFields.has(active.id);
+      const smallScreen=window.matchMedia('(max-width:600px)').matches;
+      const vv=window.visualViewport;
+      const viewportShrunk=!!vv&&vv.height<window.innerHeight*.82;
+      document.body.classList.toggle('keyboard-open',smallScreen&&fieldFocused&&(viewportShrunk||active.matches('input')));
+    }
+    document.addEventListener('focusin',updateKeyboardLayout);
+    document.addEventListener('focusout',()=>setTimeout(updateKeyboardLayout,80));
+    if(window.visualViewport){
+      window.visualViewport.addEventListener('resize',updateKeyboardLayout);
+      window.visualViewport.addEventListener('scroll',updateKeyboardLayout);
+    }
+    initQr();
+    loadBootstrap();
+  </script>
+</body>
+</html>
